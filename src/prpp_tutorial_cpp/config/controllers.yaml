@@ -1,0 +1,23 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100
+    use_sim_time: true
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    position_controller:
+      type: position_controllers/JointGroupPositionController
+
+position_controller:
+  ros__parameters:
+    joints:
+      - joint_p1
+      - joint_2
+      - joint_3
+      - Joint4
+    command_interfaces: #here we specify the command interfaces that the controller will use to send commands to the robot 
+      - position
+    state_interfaces: #what is the state interfaces that the controller will use to read the state of the robot
+      - position
+      - velocity

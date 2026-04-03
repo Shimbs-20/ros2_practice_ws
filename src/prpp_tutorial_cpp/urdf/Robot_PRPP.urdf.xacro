@@ -1,0 +1,373 @@
+<?xml version="1.0"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by
+Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot name="prpp" xmlns:xacro="http://ros.org/wiki/xacro">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.254828325477076 0.0409131764525601 0.0174480546838182"
+        rpy="0 0 0" />
+      <mass
+        value="0.523299449721077" />
+      <inertia
+        ixx="0.000406912853184852"
+        ixy="-8.59512546977067E-08"
+        ixz="-1.72906322534212E-06"
+        iyy="0.00880421950898145"
+        iyz="1.23601297741152E-05"
+        izz="0.00905486302024662" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://prpp_tutorial_cpp/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://prpp_tutorial_cpp/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="base_link">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+  <link
+    name="sliding_base_link">
+    <inertial>
+      <origin
+        xyz="0.090631204626591 0.0117098941836828 0.0527150162258735"
+        rpy="0 0 0" />
+      <mass
+        value="0.624468895388674" />
+      <inertia
+        ixx="0.000994336176342597"
+        ixy="3.33685820951727E-07"
+        ixz="-2.02052111346439E-07"
+        iyy="0.000998541796590383"
+        iyz="4.61840585629066E-05"
+        izz="0.00193497512771811" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://prpp_tutorial_cpp/meshes/sliding_base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.282352941176471 0.27843137254902 0.23921568627451 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://prpp_tutorial_cpp/meshes/sliding_base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="sliding_base_link">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <joint
+    name="joint_p1"
+    type="prismatic">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="sliding_base_link" />
+    <axis
+      xyz="-1 0 0" />
+    <limit
+      lower="-0.35"
+      upper="-0.002"
+      effort="10"
+      velocity="0.1" />
+    <dynamics damping="0.7" friction="1.0" />
+  </joint>
+
+  <gazebo reference="joint_p1">
+    <implicitSpringDamper>true</implicitSpringDamper>
+  </gazebo>
+  <link
+    name="Rotary_link">
+    <inertial>
+      <origin
+        xyz="0.00550005907704618 0.0133165558359293 0.0875187441111814"
+        rpy="0 0 0" />
+      <mass
+        value="0.577545264678411" />
+      <inertia
+        ixx="0.00363401348873574"
+        ixy="-2.04459146765171E-06"
+        ixz="3.47554042381988E-06"
+        iyy="0.0036114780132624"
+        iyz="-0.000137831953938626"
+        izz="0.000799706597197508" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://prpp_tutorial_cpp/meshes/Rotary_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://prpp_tutorial_cpp/meshes/Rotary_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="Rotary_link">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+
+  <joint
+    name="joint_2"
+    type="revolute">
+    <origin
+      xyz="0.090646 0.013565 0.090261"
+      rpy="0 0 0" />
+    <parent
+      link="sliding_base_link" />
+    <child
+      link="Rotary_link" />
+    <axis
+      xyz="-0.00020037 0.049148 0.99879" />
+    <limit
+      lower="-3.1415"
+      upper="3.1415"
+      effort="10"
+      velocity="1.5" />
+    <dynamics damping="0.7" friction="1.0" />
+  </joint>
+
+  <gazebo reference="joint_2">
+    <implicitSpringDamper>true</implicitSpringDamper>
+  </gazebo>
+  <link
+    name="vertical_slide">
+    <inertial>
+      <origin
+        xyz="0.00283036723723029 0.00779443849510467 0.00101976005246823"
+        rpy="0 0 0" />
+      <mass
+        value="0.186493084894737" />
+      <inertia
+        ixx="0.000218249376884413"
+        ixy="-3.199675893271E-05"
+        ixz="-5.86901632697407E-05"
+        iyy="0.000561299186500377"
+        iyz="-1.80556924581837E-05"
+        izz="0.000384615615757152" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://prpp_tutorial_cpp/meshes/vertical_slide.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://prpp_tutorial_cpp/meshes/vertical_slide.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="vertical_slide">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+
+  <joint
+    name="joint_3"
+    type="prismatic">
+    <origin
+      xyz="0.039728 0.00066303 0.23098"
+      rpy="0 0 0" />
+    <parent
+      link="Rotary_link" />
+    <child
+      link="vertical_slide" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-0.13"
+      upper="0.1"
+      effort="10"
+      velocity="0.1" />
+    <dynamics damping="0.7" friction="1.0" />
+  </joint>
+
+  <gazebo reference="joint_3">
+    <implicitSpringDamper>true</implicitSpringDamper>
+  </gazebo>
+  <link
+    name="Y-axis ">
+    <inertial>
+      <origin
+        xyz="0.0031649634960261 -0.0102270331631173 -0.00675313517552385"
+        rpy="0 0 0" />
+      <mass
+        value="0.0877958218970793" />
+      <inertia
+        ixx="1.03074931990772E-05"
+        ixy="-7.10328985274814E-05"
+        ixz="2.20435052150031E-05"
+        iyy="0.00182994702625446"
+        iyz="8.59200509731357E-07"
+        izz="0.00183244907629358" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://prpp_tutorial_cpp/meshes/Y-axis .STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.749019607843137 0.749019607843137 0.749019607843137 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://prpp_tutorial_cpp/meshes/Y-axis .STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="Y-axis ">
+    <material>Gazebo/White</material>
+  </gazebo>
+
+  <joint
+    name="Joint4"
+    type="prismatic">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="vertical_slide" />
+    <child
+      link="Y-axis " />
+    <axis
+      xyz="0.99917 0.038945 -0.012086" />
+    <limit
+      lower="-0.2"
+      upper="0.2"
+      effort="10"
+      velocity="0.1" />
+    <dynamics damping="0.7" friction="1.0" />
+  </joint>
+
+  <gazebo reference="Joint4">
+    <implicitSpringDamper>true</implicitSpringDamper>
+  </gazebo>
+
+  <!-- Gazebo plugin for joint state publisher -->
+  <ros2_control name="PRPPSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+
+    <joint name="joint_p1">
+      <command_interface name="position">
+        <param name="min">-0.35</param>
+        <param name="max">-0.002</param>
+      </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+
+    <joint name="joint_2">
+      <command_interface name="position">
+        <param name="min">-3.1415</param>
+        <param name="max">3.1415</param>
+      </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+
+    <joint name="joint_3">
+      <command_interface name="position">
+        <param name="min">-0.13</param>
+        <param name="max">0.1</param>
+      </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+
+    <joint name="Joint4">
+      <command_interface name="position">
+        <param name="min">-0.2</param>
+        <param name="max">0.2</param>
+      </command_interface>
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find prpp_tutorial_cpp)/config/controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>
