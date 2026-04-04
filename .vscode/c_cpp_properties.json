@@ -6,22 +6,13 @@
         "limitSymbolsToIncludedHeaders": false
       },
       "includePath": [
-        "/opt/ros/humble/include/**",
-        "/home/youssef-shemela/ros2_ws/install/my_robot_interfaces/include/**",
-        "/opt/ros/jazzy/include/**",
-        "/home/youssef-shemela/ros2_ws/src/ballbot_controller/include/**",
-        "/home/youssef-shemela/ros2_ws/src/ballbot_description/include/**",
-        "/home/youssef-shemela/ros2_ws/src/cpp_srvcli/include/**",
-        "/home/youssef-shemela/ros2_ws/src/mc_tut1/include/**",
-        "/home/youssef-shemela/ros2_ws/src/my_robot_interfaces/include/**",
-        "/home/youssef-shemela/ros2_ws/src/prpp_tutorial_cpp/include/**",
-        "/usr/include/**"
+        "${workspaceFolder}/**"
       ],
-      "name": "ros2",
-      "intelliSenseMode": "gcc-x64",
+      "name": "linux-gcc-x64",
+      "intelliSenseMode": "linux-gcc-x64",
       "compilerPath": "/usr/bin/gcc",
-      "cStandard": "gnu11",
-      "cppStandard": "c++17"
+      "cStandard": "${default}",
+      "cppStandard": "${default}"
     }
   ],
   "version": 4
