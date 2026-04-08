@@ -9,6 +9,10 @@ controller_manager:
     simple_velocity_controller:
       type: velocity_controllers/JointGroupVelocityController
 
+    ballbot_controller:
+      type: diff_drive_controller/DiffDriveController
+
+
 simple_velocity_controller:
   ros__parameters:
     joints:
@@ -16,3 +20,49 @@ simple_velocity_controller:
       - wheel_right_joint
     command_interfaces:
       - velocity
+
+
+ballbot_controller:
+  ros__parameters:
+    type: diff_drive_controller/DiffDriveController
+    use_stamped_vel: false  # <--- CHANGE THIS TO FALSE    left_wheel_names: ["wheel_left_joint"]
+    left_wheel_names: ["wheel_left_joint"]
+    right_wheel_names: ["wheel_right_joint"]
+    publish_rate: 50.0 # Hz
+    pose_covariance_diagional: [0.01, 0.01,1.0e-03, 1.0e-03, 1.0e-03, 0.01]
+    twist_covariance_diagional: [0.01, 0.01,1.0e-03, 1.0e-03, 1.0e-03, 0.01]
+    wheel_separation: 0.33 # meters
+    wheel_radius: 0.17 # meters
+    left_wheel_radius_multiplier: 1.0
+    right_wheel_radius_multiplier: 1.0
+    wheel_seperation_multiplier: 1.0
+
+    cmd_vel_timeout: 0.5 # seconds
+
+    base_frame_id: base_footprint
+    publish_limited_velocity: true
+    publish_wheel_data: true
+    enable_odom_tf: true
+
+    linear:
+      x:
+        has_velocity_limits: true
+        max_velocity: 1.0 # m/s
+        min_velocity: -1.0 # m/s
+        has_acceleration_limits: true
+        max_acceleration: 0.5 # m/s^2
+        min_acceleration: -0.5 # rad/s^2
+        has_jerk_limits: false
+        max_jerk: 5.0  # m/s^3
+       
+
+    angular:
+      z:
+        has_velocity_limits: true
+        max_velocity: 1.0 # rad/s
+        min_velocity: -1.0 # rad/s
+        has_acceleration_limits: true
+        max_acceleration: 0.5 # rad/s^2
+        min_acceleration: -0.5 # rad/s^2
+        has_jerk_limits: false
+        max_jerk: 5.0  # m/s^3
