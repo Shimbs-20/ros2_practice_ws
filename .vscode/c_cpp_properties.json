@@ -3,10 +3,19 @@
     {
       "browse": {
         "databaseFilename": "${workspaceFolder}/.vscode/browse.vc.db",
-        "limitSymbolsToIncludedHeaders": false
+        "limitSymbolsToIncludedHeaders": false,
+        "path": [
+          "${workspaceFolder}/src/**",
+          "${workspaceFolder}/install/**",
+          "/opt/ros/jazzy/include"
+        ]
       },
       "includePath": [
-        "${workspaceFolder}/**"
+        "${workspaceFolder}/src/**",
+        "${workspaceFolder}/install/**",
+        "/opt/ros/jazzy/include",
+        "/opt/ros/jazzy/include/**",
+        "/usr/include/**"
       ],
       "name": "linux-gcc-x64",
       "intelliSenseMode": "linux-gcc-x64",
