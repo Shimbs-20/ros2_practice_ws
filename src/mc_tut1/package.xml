@@ -13,6 +13,9 @@
   <depend>example_interfaces</depend>
   <depend>my_robot_interfaces</depend>
   <depend>turtlesim</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>geometry_msgs</depend>
 
 
   <test_depend>ament_lint_auto</test_depend>
