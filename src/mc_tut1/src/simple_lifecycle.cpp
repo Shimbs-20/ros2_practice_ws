@@ -77,8 +77,6 @@ class Simple_lifenode : public rclcpp_lifecycle::LifecycleNode{
 
 
 
-
-
 int main(int argc, char **argv){
     rclcpp::init(argc, argv);
     rclcpp::executors::SingleThreadedExecutor executor;
