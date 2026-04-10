@@ -69,12 +69,9 @@ class Simple_lifenode : public rclcpp_lifecycle::LifecycleNode{
         RCLCPP_INFO(get_logger(), "I heard: '%s'", msg->data.c_str());
     }
     
-    
-
     private:
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_;
         
-    
 };
 
 
