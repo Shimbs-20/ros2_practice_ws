@@ -72,7 +72,6 @@ class Simple_lifenode : public rclcpp_lifecycle::LifecycleNode{
     private:
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_;
 
-    
 };
 
 int main(int argc, char **argv){
