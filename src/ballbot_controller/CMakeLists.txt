@@ -33,6 +33,9 @@ include_directories(
 add_executable(simple_controller src/simple_controller.cpp)
 ament_target_dependencies(simple_controller rclcpp geometry_msgs std_msgs Eigen3)
 
+add_executable(twist_relay src/twist_relay.cpp)
+ament_target_dependencies(twist_relay rclcpp geometry_msgs std_msgs)
+
 
 install (DIRECTORY include
   DESTINATION include
@@ -53,6 +56,7 @@ install(PROGRAMS
 
 install(TARGETS
   simple_controller
+  twist_relay
   DESTINATION lib/${PROJECT_NAME}
   )
 

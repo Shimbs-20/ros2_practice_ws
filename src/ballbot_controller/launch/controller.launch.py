@@ -27,7 +27,7 @@ def generate_launch_description():
 
     use_simple_controller_arg = DeclareLaunchArgument(
         "use_simple_controller",
-        default_value="True",
+        default_value="False",
     )
 
     # FIXED: Renamed these variables so they don't overwrite the arguments
