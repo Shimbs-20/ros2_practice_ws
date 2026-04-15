@@ -7,6 +7,10 @@
             <plugin>gz_ros2_control/GazeboSimSystem</plugin>
         </hardware>
         
+        <hardware>
+            <plugin>bumperbot_firmware/BumperbotInterface</plugin>
+            <param name="port">/dev/ttyUSB0</param>
+        </hardware>
         <joint name="wheel_right_joint">
             <command_interface name="velocity">
               <param name="min">-1</param>
@@ -26,11 +30,5 @@
         </joint>
         
     </ros2_control>
-
-    <gazebo>
-        <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-            <parameters>$(find ballbot_controller)/config/ballbot_controllers.yaml</parameters>
-        </plugin>
-    </gazebo>
 
 </robot>
