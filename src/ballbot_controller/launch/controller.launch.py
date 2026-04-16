@@ -6,6 +6,12 @@ from launch.conditions import IfCondition, UnlessCondition
 
 def generate_launch_description():
 
+    use_sim_time_arg = DeclareLaunchArgument(
+        "use_sim_time",
+        default_value="True",
+    )
+
+
     use_python_arg = DeclareLaunchArgument(
         "use_python",
         default_value="false",
@@ -24,10 +30,15 @@ def generate_launch_description():
         description="Wheel separation distance",
     )
 
+    wheel_radius_error_arg = DeclareLaunchArgument(
+        "wheel_radius_error",
+        default_value="0.005",
+    )
+
 
     use_simple_controller_arg = DeclareLaunchArgument(
         "use_simple_controller",
-        default_value="False",
+        default_value="True",
     )
 
     # FIXED: Renamed these variables so they don't overwrite the arguments
@@ -88,10 +99,11 @@ def generate_launch_description():
 
     return LaunchDescription([
         use_python_arg,
+        use_simple_controller_arg,
+        use_sim_time_arg,
         wheel_radius_arg,
         wheel_separation_arg,
         joint_state_broadcaster,
         simple_controller,
-        use_simple_controller_arg,
         wheel_simple_controller
     ])

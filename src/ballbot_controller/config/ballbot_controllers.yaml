@@ -25,7 +25,7 @@ simple_velocity_controller:
 ballbot_controller:
   ros__parameters:
     type: diff_drive_controller/DiffDriveController
-    use_stamped_vel: false  # <--- CHANGE THIS TO FALSE    left_wheel_names: ["wheel_left_joint"]
+    use_stamped_vel: true  # Changed to true to accept TwistStamped messages
     left_wheel_names: ["wheel_left_joint"]
     right_wheel_names: ["wheel_right_joint"]
     publish_rate: 50.0 # Hz
@@ -40,6 +40,7 @@ ballbot_controller:
     cmd_vel_timeout: 0.5 # seconds
 
     base_frame_id: base_footprint
+    odom_frame_id: odom
     publish_limited_velocity: true
     publish_wheel_data: true
     enable_odom_tf: true

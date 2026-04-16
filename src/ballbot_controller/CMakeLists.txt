@@ -51,6 +51,7 @@ install(DIRECTORY
 
 install(PROGRAMS
   ${PROJECT_NAME}/simple_controller.py
+  ${PROJECT_NAME}/twist_relay.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -62,6 +63,11 @@ install(TARGETS
 
 
 if(BUILD_TESTING)
+  find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_simple_controller test/test_simple_controller.py
+    TIMEOUT 60
+  )
+
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files
