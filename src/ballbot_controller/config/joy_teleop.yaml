@@ -1,9 +1,9 @@
-joy_teleop:
+joy_teleop_node:
   ros__parameters:
     move:
       type: topic
-      interface: "geometry_msgs/msg/Twist"
-      topic: "/ballbot_controller/cmd_vel_unstamped"
+      interface: "geometry_msgs/msg/TwistStamped"
+      topic: "/input_joy/cmd_vel_stamped"
 
       deadman_buttons: [5]
 
@@ -14,5 +14,5 @@ joy_teleop:
           offset: 0.0
         angular-z:
           axis: 3
-          scale: 8.0
+          scale: 1.0
           offset: 0.0

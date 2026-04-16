@@ -7,10 +7,11 @@
             <plugin>gz_ros2_control/GazeboSimSystem</plugin>
         </hardware>
         
-        <hardware>
+        <!-- <hardware>
             <plugin>bumperbot_firmware/BumperbotInterface</plugin>
             <param name="port">/dev/ttyUSB0</param>
-        </hardware>
+        </hardware> -->
+
         <joint name="wheel_right_joint">
             <command_interface name="velocity">
               <param name="min">-1</param>

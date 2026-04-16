@@ -1,0 +1,21 @@
+twist_mux:
+  ros__parameters:
+    topics:
+      navigation:
+        topic: /cmd_vel_nav
+        timeout: 0.5
+        priority: 10
+      keyboard:
+        topic: /cmd_vel_key
+        timeout: 0.5
+        priority: 50
+      joystick:
+        topic: /cmd_vel_joy
+        timeout: 0.5
+        priority: 100
+# twist_mux_locks.yaml
+locks:
+  emergency_sinset-block-start:
+    topic: /e_stop               # publish True to lock all velocity
+    timeout: 0.0
+    priority: 100                # highest — overrides everything
