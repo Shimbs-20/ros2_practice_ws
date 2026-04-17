@@ -7,7 +7,7 @@
         "path": [
           "${workspaceFolder}/src/**",
           "${workspaceFolder}/install/**",
-          "/opt/ros/jazzy/include"
+          "/opt/ros/jazzy/include/**"
         ]
       },
       "includePath": [
