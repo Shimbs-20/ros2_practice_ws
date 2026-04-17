@@ -1,0 +1,7 @@
+src/ballbot_description/models/
+src/ballbot_description/meshes/
+src/ballbot_description/photos/
+src/ballbot_description/worlds/
+build/
+install/
+log/
