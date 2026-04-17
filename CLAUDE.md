@@ -45,3 +45,14 @@ colcon test-result --verbose
 ## Branch Convention
 - Feature branches: `feature/<description>`
 - Commit messages: imperative tense ("Add tests for controller")
+## Path Planning
+- Dijkstra planner: `src/ballbot_planning/ballbot_planning/dijkstra_planner.py`
+- Planner subscribes to `/map` (OccupancyGrid) and `/goal_pose` (PoseStamped)
+- Publishes path to `/dijkstra/path` and visualization to `/dijkstra/map`
+- Current issue: publishes visualization after EVERY cell expansion — very slow
+- exploration_directions are 4-connected (no diagonals)
+- Grid coordinates via world_grid() and grid_to_world() helpers
+
+## Do Not
+- Do not change the topic names without asking
+- Do not remove Dijkstra — add A* as an alternative, switchable via ROS parameter
