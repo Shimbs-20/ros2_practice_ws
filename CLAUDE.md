@@ -1,5 +1,4 @@
 # Ballbot ROS2 Workspace
-
 ROS2 Jazzy workspace for a differential-drive ballbot with Dijkstra path planning.
 
 ## Focus Packages
@@ -13,7 +12,7 @@ ROS2 Jazzy workspace for a differential-drive ballbot with Dijkstra path plannin
 ## Build Commands
 ```bash
 cd ~/ros2_ws && colcon build --symlink-install
-colcon build --symlink-install --packages-select ballbot_controller
+colcon build --symlink-install --packages-select ballbot_planning
 source install/setup.bash
 ```
 
@@ -36,15 +35,6 @@ colcon test-result --verbose
 - Wheel separation: 0.33m, Wheel radius: 0.17m
 - base_frame_id: base_footprint, odom_frame_id: odom
 
-## Do Not
-- Do not modify URDF/Xacro without asking
-- Do not add dependencies to package.xml without asking
-- Do not use print() — use node logger
-- Do not reorder middleware in launch files without asking
-
-## Branch Convention
-- Feature branches: `feature/<description>`
-- Commit messages: imperative tense ("Add tests for controller")
 ## Path Planning
 - Dijkstra planner: `src/ballbot_planning/ballbot_planning/dijkstra_planner.py`
 - Planner subscribes to `/map` (OccupancyGrid) and `/goal_pose` (PoseStamped)
@@ -54,5 +44,13 @@ colcon test-result --verbose
 - Grid coordinates via world_grid() and grid_to_world() helpers
 
 ## Do Not
-- Do not change the topic names without asking
-- Do not remove Dijkstra — add A* as an alternative, switchable via ROS parameter
+- Do not modify URDF/Xacro without asking
+- Do not add dependencies to package.xml without asking
+- Do not use print() — use node logger
+- Do not reorder middleware in launch files without asking
+- Do not change planner topic names without asking
+- Do not remove Dijkstra — add A* as alternative switchable via ROS parameter
+
+## Branch Convention
+- Feature branches: `feature/<description>`
+- Commit messages: imperative tense ("Add A* planner to ballbot_planning")
