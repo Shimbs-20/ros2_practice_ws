@@ -61,7 +61,6 @@ ament_target_dependencies(simple_turtlesim_kinematics rclcpp turtlesim)
 add_executable(tf2_kinematics src/tf2_kinematics.cpp)
 ament_target_dependencies(tf2_kinematics rclcpp tf2 tf2_ros geometry_msgs my_robot_interfaces)
 
-<<<<<<< Updated upstream
 add_executable(simple_lifecycle src/simple_lifecycle.cpp)
 ament_target_dependencies(simple_lifecycle rclcpp rclcpp_lifecycle std_msgs)
 
@@ -73,12 +72,8 @@ ament_target_dependencies(QOS_nodeSub rclcpp rclcpp_lifecycle std_msgs)
 
 
 
-=======
 
-add_executable(simple_lifecycle src/simple_lifecycle.cpp)
-ament_target_dependencies(simple_lifecycle rclcpp rclcpp_lifecycle std_msgs)
 
->>>>>>> Stashed changes
 install(TARGETS
   cpp_node
   robot_news_station
@@ -90,13 +85,9 @@ install(TARGETS
   hardware_status
   tf2_kinematics
   simple_turtlesim_kinematics
-<<<<<<< Updated upstream
   QOS_nodePub
   simple_lifecycle
   QOS_nodeSub
-=======
-  simple_lifecycle
->>>>>>> Stashed changes
   DESTINATION lib/${PROJECT_NAME}
   )
 

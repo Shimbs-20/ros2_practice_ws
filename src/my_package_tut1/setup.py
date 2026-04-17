@@ -34,12 +34,9 @@ setup(
             "py_client_opp = my_package_tut1.py_servclie_oop:main",
             "hw_status_publisher = my_package_tut1.hardware_status:main",
             "turtlesim_kinematics = my_package_tut1.turtlesim_kinematics:main",
-<<<<<<< Updated upstream
             "simple_QOS_pub = my_package_tut1.simple_QOS:main",
             "simple_QOS_sub = my_package_tut1.simple_QOS_sub:main"
-=======
             "simple_lifecycle = my_package_tut1.simple_lifecycle:main"
->>>>>>> Stashed changes
         ],
     },
 )

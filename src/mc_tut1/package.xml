@@ -17,10 +17,7 @@
   <depend>tf2_ros</depend>
   <depend>geometry_msgs</depend>
   <depend>rclcpp_lifecycle</depend>
-<<<<<<< Updated upstream
   <depend>std_msgs</depend>
-=======
->>>>>>> Stashed changes
 
 
   <test_depend>ament_lint_auto</test_depend>
