@@ -1,11 +1,21 @@
-joystick_relay:
+
+twist_mux:
   ros__parameters:
-    priority: True
-    turbo:
-      linear_forward_min  : 0.2
-      linear_forward_max  : 0.7
-      linear_backward_min : 0.2
-      linear_backward_max : 0.7
-      angular_min : 0.7
-      angular_max : 5.0
-      steps       : 3
+    topics:
+      navigation:
+        topic: /cmd_vel_nav
+        timeout: 0.5
+        priority: 10
+      keyboard:
+        topic: /cmd_vel_key
+        timeout: 0.5
+        priority: 50
+      joystick:
+        # BUG FIX: was /cmd_vel_joy but joy_teleop publishes to
+        # /input_joy/cmd_vel (unstamped) after twist_relay strips the stamp.
+        # twist_mux only handles geometry_msgs/Twist (unstamped), so we feed
+        # it the unstamped topic that twist_relay re-publishes.
+        topic: /input_joy/cmd_vel
+        timeout: 0.5
+        priority: 100
+ 

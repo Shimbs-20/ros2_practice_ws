@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 100 # Hz
+    update_rate: 100  # Hz
     use_sim_time: true
 
     joint_state_broadcaster:
@@ -24,20 +24,23 @@ simple_velocity_controller:
 
 ballbot_controller:
   ros__parameters:
-    type: diff_drive_controller/DiffDriveController
-    use_stamped_vel: true  # Changed to true to accept TwistStamped messages
-    left_wheel_names: ["wheel_left_joint"]
+    use_stamped_vel: false   # twist_relay stamps every Twist before sending here
+    left_wheel_names:  ["wheel_left_joint"]
     right_wheel_names: ["wheel_right_joint"]
-    publish_rate: 50.0 # Hz
-    pose_covariance_diagonal: [0.01, 0.01,1.0e-03, 1.0e-03, 1.0e-03, 0.01]
-    twist_covariance_diagonal: [0.01, 0.01,1.0e-03, 1.0e-03, 1.0e-03, 0.01]
-    wheel_separation: 0.33 # meters
-    wheel_radius: 0.17 # meters
-    left_wheel_radius_multiplier: 1.0
-    right_wheel_radius_multiplier: 1.0
-    wheel_seperation_multiplier: 1.0
+    publish_rate: 50.0  # Hz
 
-    cmd_vel_timeout: 0.5 # seconds
+    pose_covariance_diagonal:  [0.01, 0.01, 1.0e-03, 1.0e-03, 1.0e-03, 0.01]
+    twist_covariance_diagonal: [0.01, 0.01, 1.0e-03, 1.0e-03, 1.0e-03, 0.01]
+
+    wheel_separation: 0.140220369883727  # meters (both wheels' Y offset distance)
+    wheel_radius: 0.033                   # meters (from URDF collision sphere)
+
+    left_wheel_radius_multiplier:  1.0
+    right_wheel_radius_multiplier: 1.0
+    # BUG FIX: "wheel_seperation_multiplier" was a typo → "wheel_separation_multiplier"
+    wheel_separation_multiplier: 1.0
+
+    cmd_vel_timeout: 0.5  # seconds
 
     base_frame_id: base_footprint
     odom_frame_id: odom
@@ -47,23 +50,22 @@ ballbot_controller:
 
     linear:
       x:
-        has_velocity_limits: true
-        max_velocity: 1.0 # m/s
-        min_velocity: -1.0 # m/s
+        has_velocity_limits:    true
+        max_velocity:           1.0   # m/s
+        min_velocity:          -1.0   # m/s
         has_acceleration_limits: true
-        max_acceleration: 0.5 # m/s^2
-        min_acceleration: -0.5 # rad/s^2
-        has_jerk_limits: false
-        max_jerk: 5.0  # m/s^3
-       
+        max_acceleration:       0.5   # m/s²
+        min_acceleration:      -0.5   # m/s²
+        has_jerk_limits:        false
+        max_jerk:               5.0   # m/s³
 
     angular:
       z:
-        has_velocity_limits: true
-        max_velocity: 1.0 # rad/s
-        min_velocity: -1.0 # rad/s
+        has_velocity_limits:    true
+        max_velocity:           1.0   # rad/s
+        min_velocity:          -1.0   # rad/s
         has_acceleration_limits: true
-        max_acceleration: 0.5 # rad/s^2
-        min_acceleration: -0.5 # rad/s^2
-        has_jerk_limits: false
-        max_jerk: 5.0  # m/s^3
+        max_acceleration:       0.5   # rad/s²
+        min_acceleration:      -0.5   # rad/s²
+        has_jerk_limits:        false
+        max_jerk:               5.0   # rad/s³

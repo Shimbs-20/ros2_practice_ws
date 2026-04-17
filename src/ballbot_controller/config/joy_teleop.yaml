@@ -1,18 +1,30 @@
+
 joy_teleop_node:
   ros__parameters:
     move:
       type: topic
-      interface: "geometry_msgs/msg/TwistStamped"
-      topic: "/input_joy/cmd_vel_stamped"
-
-      deadman_buttons: [5]
-
+      # BUG FIX: Changed from TwistStamped → Twist.
+      # twist_mux only subscribes to geometry_msgs/Twist.
+      # twist_relay's joy_twist_callback already strips the stamp and
+      # re-publishes on /input_joy/cmd_vel (Twist) for twist_mux.
+      # If you keep TwistStamped here you must also change twist_mux to
+      # accept a stamped topic, which it cannot do natively.
+      interface_type: geometry_msgs/msg/Twist
+      # BUG FIX: publish directly to the topic twist_mux listens on
+      # so the joystick path is: joy_node → joy_teleop → /input_joy/cmd_vel
+      #                          → twist_mux → /ballbot_controller/cmd_vel_unstamped
+      #                          → twist_relay (stamp) → ballbot_controller/cmd_vel
+      topic_name: /input_joy/cmd_vel
+ 
+      deadman_buttons: [4]   # L1 on DualShock4 – hold to move
+ 
       axis_mappings:
         linear-x:
-          axis: 1
+          axis: 1        # Left stick vertical
           scale: 1.0
           offset: 0.0
         angular-z:
-          axis: 3
+          axis: 3        # Right stick horizontal
           scale: 1.0
           offset: 0.0
+ 
