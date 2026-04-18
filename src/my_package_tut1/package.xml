@@ -8,10 +8,10 @@
   <license>Apache-2.0</license>
 
   <depend>rclpy</depend>
-  <depend>exampexample_interfaces.msg </depend>
+  <depend>example_interfaces</depend>
   <depend>my_robot_interfaces</depend>
   <depend>turtlesim</depend>
-  <depend>math</depend>
+  <depend>std_msgs</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

@@ -36,6 +36,7 @@ setup(
             "turtlesim_kinematics = my_package_tut1.turtlesim_kinematics:main",
             "simple_QOS_pub = my_package_tut1.simple_QOS:main",
             "simple_QOS_sub = my_package_tut1.simple_QOS_sub:main"
+            "simple_lifecycle = my_package_tut1.simple_lifecycle:main"
         ],
     },
 )
