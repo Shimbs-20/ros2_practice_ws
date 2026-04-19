@@ -15,19 +15,16 @@ def generate_launch_description():
     use_python_arg = DeclareLaunchArgument(
         "use_python",
         default_value="False",
-        description="Use Python controller instead of C++",
     )
 
     wheel_radius_arg = DeclareLaunchArgument(
         "wheel_radius",
         default_value="0.17",
-        description="Wheel radius (metres) – must match URDF and YAML",
     )
 
     wheel_separation_arg = DeclareLaunchArgument(
         "wheel_separation",
         default_value="0.33",
-        description="Wheel separation distance (metres) – must match URDF and YAML",
     )
 
     # BUG FIX: wheel_radius_error was declared but never forwarded to any node.
@@ -35,7 +32,6 @@ def generate_launch_description():
     wheel_radius_error_arg = DeclareLaunchArgument(
         "wheel_radius_error",
         default_value="0.005",
-        description="Wheel radius error for calibration (currently unused)",
     )
 
     use_simple_controller_arg = DeclareLaunchArgument(
@@ -43,9 +39,15 @@ def generate_launch_description():
         default_value="True",
     )
 
-    use_python        = LaunchConfiguration("use_python")
-    wheel_radius      = LaunchConfiguration("wheel_radius")
-    wheel_separation  = LaunchConfiguration("wheel_separation")
+    # LaunchConfiguration objects are substitutions used INSIDE node definitions.
+    # BUG FIX 1: "use_sim_time" LaunchConfiguration was added to the
+    # LaunchDescription list directly — that is what caused the crash:
+    # "'LaunchConfiguration' object has no attribute 'describe_sub_entities'"
+    # Only DeclareLaunchArgument objects (and actions/nodes) go in the list.
+    use_sim_time          = LaunchConfiguration("use_sim_time")
+    use_python            = LaunchConfiguration("use_python")
+    wheel_radius          = LaunchConfiguration("wheel_radius")
+    wheel_separation      = LaunchConfiguration("wheel_separation")
     use_simple_controller = LaunchConfiguration("use_simple_controller")
 
     joint_state_broadcaster = Node(
@@ -89,6 +91,7 @@ def generate_launch_description():
                     # BUG FIX: parameter key must be "wheel_separation" to match
                     # declare_parameter() call in simple_controller.cpp/py
                     "wheel_separation": wheel_separation,
+                    "use_sim_time": use_sim_time,
                 }],
                 condition=IfCondition(use_python),
             ),
@@ -99,6 +102,7 @@ def generate_launch_description():
                 parameters=[{
                     "wheel_radius":    wheel_radius,
                     "wheel_separation": wheel_separation,
+                    "use_sim_time": use_sim_time,
                 }],
                 condition=UnlessCondition(use_python),
             ),

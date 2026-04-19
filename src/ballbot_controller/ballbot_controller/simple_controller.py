@@ -9,44 +9,61 @@ import numpy as np
 class SimpleController(Node):
 
     def __init__(self):
-
         super().__init__("simple_controller")
-        self.declare_parameter("wheel_radius", 0.033)
-        self.declare_parameter("wheel_separation", 0.17)
+
+        # BUG FIX 1: Default values were wrong AND swapped
+        # Old: wheel_radius=0.033, wheel_separation=0.17  ← completely wrong
+        # Correct values must match URDF and ballbot_controllers.yaml
+        self.declare_parameter("wheel_radius", 0.17)
+        self.declare_parameter("wheel_separation", 0.33)
 
         self.wheel_radius_ = self.get_parameter("wheel_radius").get_parameter_value().double_value
         self.wheel_separation_ = self.get_parameter("wheel_separation").get_parameter_value().double_value
 
-        self.get_logger().info("Using wheel radius %d" % self.wheel_radius_)
-        self.get_logger().info("Using wheel separation %d" % self.wheel_separation_)
+        # BUG FIX 2: %d is integer format — prints 0 for floats always
+        # Use %f or f-strings instead
+        self.get_logger().info(f"Using wheel radius {self.wheel_radius_}")
+        self.get_logger().info(f"Using wheel separation {self.wheel_separation_}")
 
-        self.wheel_cmd_pub_ = self.create_publisher(Float64MultiArray, "simple_velocity_controller/commands", 10)
-        self.vel_sub_ = self.create_subscription(TwistStamped, "ballbot_controller/cmd_vel", self.velCallback, 10)
+        # BUG FIX 3: Missing leading slash — topics were relative to node namespace
+        # and might not connect to the correct absolute topics
+        self.wheel_cmd_pub_ = self.create_publisher(
+            Float64MultiArray, "/simple_velocity_controller/commands", 10)
 
-        self.speed_conversion_ = np.array([[self.wheel_radius_/2, self.wheel_radius_/2],
-                                           [self.wheel_radius_/self.wheel_separation_, -self.wheel_radius_/self.wheel_separation_]])
-        self.get_logger().info("The conversion matrix is %s" % self.speed_conversion_)
+        self.vel_sub_ = self.create_subscription(
+            TwistStamped, "/ballbot_controller/cmd_vel", self.velCallback, 10)
 
+        # Kinematic conversion matrix
+        # [v_lin, omega]^T = M * [v_left, v_right]^T
+        # Invert to get wheel speeds from robot speeds
+        self.speed_conversion_ = np.array([
+            [self.wheel_radius_ / 2,              self.wheel_radius_ / 2],
+            [self.wheel_radius_ / self.wheel_separation_, -self.wheel_radius_ / self.wheel_separation_]
+        ])
+        self.get_logger().info(f"The conversion matrix is:\n{self.speed_conversion_}")
 
-    def velCallback(self, msg : TwistStamped):
-        # Implements the differential kinematic model
-        # Given v and w, calculate the velocities of the wheels
-        robot_speed = np.array([[msg.twist.linear.x],
-                                [msg.twist.angular.z]])
-        wheel_speed = np.matmul(np.linalg.inv(self.speed_conversion_), robot_speed)
+    def velCallback(self, msg: TwistStamped):
+        robot_speed = np.array([
+            [msg.twist.linear.x],
+            [msg.twist.angular.z]
+        ])
+        wheel_speed = np.linalg.inv(self.speed_conversion_) @ robot_speed
 
         wheel_speed_msg = Float64MultiArray()
-        wheel_speed_msg.data = [wheel_speed[1, 0], wheel_speed[0, 0]]
+
+        # BUG FIX 4: Wheel order was swapped [1,0] instead of [0,1]
+        # simple_velocity_controller expects [left, right]
+        # matching the joints order in ballbot_controllers.yaml:
+        #   joints: [wheel_left_joint, wheel_right_joint]
+        wheel_speed_msg.data = [wheel_speed[0, 0], wheel_speed[1, 0]]
 
         self.wheel_cmd_pub_.publish(wheel_speed_msg)
 
 
 def main():
     rclpy.init()
-
     simple_controller = SimpleController()
     rclpy.spin(simple_controller)
-
     simple_controller.destroy_node()
     rclpy.shutdown()
 

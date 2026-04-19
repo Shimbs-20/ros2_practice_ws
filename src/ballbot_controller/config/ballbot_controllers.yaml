@@ -1,7 +1,6 @@
 controller_manager:
   ros__parameters:
     update_rate: 100  # Hz
-    use_sim_time: true
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -24,16 +23,19 @@ simple_velocity_controller:
 
 ballbot_controller:
   ros__parameters:
-    use_stamped_vel: false   # twist_relay stamps every Twist before sending here
-    left_wheel_names:  ["wheel_left_joint"]
-    right_wheel_names: ["wheel_right_joint"]
+
+    use_stamped_vel: true    # twist_relay stamps every Twist before sending here
+                             # so diff_drive_controller subscribes on
+                             # /ballbot_controller/cmd_vel (TwistStamped)
+    left_wheel_names:  ['wheel_left_joint']
+    right_wheel_names: ['wheel_right_joint']
     publish_rate: 50.0  # Hz
 
     pose_covariance_diagonal:  [0.01, 0.01, 1.0e-03, 1.0e-03, 1.0e-03, 0.01]
     twist_covariance_diagonal: [0.01, 0.01, 1.0e-03, 1.0e-03, 1.0e-03, 0.01]
 
-    wheel_separation: 0.140220369883727  # meters (both wheels' Y offset distance)
-    wheel_radius: 0.033                   # meters (from URDF collision sphere)
+    wheel_separation: 0.33  # meters (both wheels' Y offset distance)
+    wheel_radius: 0.17                   # meters (from URDF collision sphere)
 
     left_wheel_radius_multiplier:  1.0
     right_wheel_radius_multiplier: 1.0

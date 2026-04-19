@@ -1,21 +1,19 @@
-
+# Correct structure:
 twist_mux:
   ros__parameters:
-    topics:
-      navigation:
-        topic: /cmd_vel_nav
-        timeout: 0.5
-        priority: 10
-      keyboard:
-        topic: /cmd_vel_key
-        timeout: 0.5
-        priority: 50
-      joystick:
-        # BUG FIX: was /cmd_vel_joy but joy_teleop publishes to
-        # /input_joy/cmd_vel (unstamped) after twist_relay strips the stamp.
-        # twist_mux only handles geometry_msgs/Twist (unstamped), so we feed
-        # it the unstamped topic that twist_relay re-publishes.
-        topic: /input_joy/cmd_vel
-        timeout: 0.5
-        priority: 100
- 
+    joy_turbo:
+      increase_topic: /joy_turbo_increase   # matches action server name
+      decrease_topic: /joy_turbo_decrease   # matches action server name
+      steps: 3                              # number of speed levels
+      turbo_topics:
+        - /input_joy/cmd_vel               # which topics get scaled
+      linear:
+        forward:
+          min: 0.2
+          max: 0.7
+        backward:
+          min: 0.2
+          max: 0.7
+      angular:
+        min: 0.7
+        max: 2.0

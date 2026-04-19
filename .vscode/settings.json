@@ -107,5 +107,6 @@
   "C_Cpp_Runner.useLinkTimeOptimization": false,
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "github.copilot.chat.codeGeneration.useInstructionFiles": true,
-  "DockerRun.DisableAutoGenerateConfig": true
+  "DockerRun.DisableAutoGenerateConfig": true,
+  "ROS2.distro": "jazzy"
 }

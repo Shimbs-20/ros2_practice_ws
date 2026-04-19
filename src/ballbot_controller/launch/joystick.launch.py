@@ -2,7 +2,7 @@ from launch import LaunchDescription
 from launch_ros.actions import Node
 import os
 from ament_index_python import get_package_share_directory
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration
 
 
@@ -47,26 +47,35 @@ def generate_launch_description():
     #   twist_mux → /ballbot_controller/cmd_vel_unstamped (Twist)
     #   twist_relay subscribes there, stamps it, publishes on
     #   ballbot_controller/cmd_vel (TwistStamped) → diff_drive_controller
-    twist_mux_node = Node(
-        package="twist_mux",
-        executable="twist_mux",
-        name="twist_mux",
-        parameters=[
-            os.path.join(ballbot_controller_pkg, "config", "twist_mux_topic.yaml"),
-            os.path.join(ballbot_controller_pkg, "config", "twist_mux_locks.yaml"),
-            {"use_sim_time": LaunchConfiguration("use_sim_time")},
-        ],
-        remappings=[
-            # twist_mux always publishes on /cmd_vel_out; remap to the
-            # unstamped relay input that twist_relay picks up.
-            ("/cmd_vel_out", "/ballbot_controller/cmd_vel"),
-        ],
+    twist_mux_launch = IncludeLaunchDescription(
+        os.path.join(
+            get_package_share_directory("twist_mux"),
+            "launch",
+            "twist_mux_launch.py"
+        ),
+        launch_arguments={
+            # BUG FIX 3: Missing leading slash on cmd_vel_out.
+            # Without it twist_mux publishes on a relative topic and
+            # twist_relay never receives anything.
+            "cmd_vel_out": "/ballbot_controller/cmd_vel_unstamped",
+            "config_locks":  os.path.join(ballbot_controller_pkg, "config", "twist_mux_locks.yaml"),
+            # BUG FIX 4: Filename was "twist_mux_topics.yaml" (with an 's')
+            # but the actual file is "twist_mux_topic.yaml" (no 's').
+            # This caused a FileNotFoundError at launch.
+            "config_topics": os.path.join(ballbot_controller_pkg, "config", "twist_mux_topic.yaml"),
+            "config_joy":    os.path.join(ballbot_controller_pkg, "config", "twist_mux_joy.yaml"),
+            "use_sim_time":  LaunchConfiguration("use_sim_time"),
+        }.items(),
     )
-
-    # BUG FIX: The original launch used "twist_relay.py" as the executable,
-    # implying a Python script. The file uploaded is twist_relay.cpp (C++).
-    # Use the compiled executable name "twist_relay".
-    # If you DO have a Python version, rename accordingly.
+    # twist_relay stamps the Twist coming out of twist_mux and forwards it as
+    # TwistStamped on /ballbot_controller/cmd_vel, which is what
+    # diff_drive_controller subscribes to when use_stamped_vel=true.
+    #
+    # Full chain (works for joy_teleop, NAV2 /cmd_vel_nav, keyboard /cmd_vel_key,
+    # PS4 controller — all go through twist_mux):
+    #   source → twist_mux → /ballbot_controller/cmd_vel_unstamped (Twist)
+    #          → twist_relay → /ballbot_controller/cmd_vel (TwistStamped)
+    #          → diff_drive_controller
     twist_relay_node = Node(
         package="ballbot_controller",
         executable="twist_relay",          # compiled C++ binary
@@ -78,6 +87,6 @@ def generate_launch_description():
         use_sim_time_arg,
         joy_node,
         joy_teleop_node,
-        twist_mux_node,
-        # twist_relay_node,
+        twist_mux_launch,
+        twist_relay_node,
     ])

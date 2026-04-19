@@ -3,21 +3,21 @@
     {
       "browse": {
         "databaseFilename": "${workspaceFolder}/.vscode/browse.vc.db",
-        "limitSymbolsToIncludedHeaders": false,
-        "path": [
-          "${workspaceFolder}/src/**",
-          "${workspaceFolder}/install/**",
-          "/opt/ros/jazzy/include"
-        ]
+        "limitSymbolsToIncludedHeaders": false
       },
       "includePath": [
-        "${workspaceFolder}/src/**",
-        "${workspaceFolder}/install/**",
-        "/opt/ros/jazzy/include",
         "/opt/ros/jazzy/include/**",
+        "/home/youssef-shemela/ros2_ws/install/my_robot_interfaces/include/**",
+        "/home/youssef-shemela/ros2_ws/install/ballbot_mapping/include/**",
+        "/home/youssef-shemela/ros2_ws/install/ballbot_controller/include/**",
+        "/home/youssef-shemela/ros2_ws/src/ballbot_controller/include/**",
+        "/home/youssef-shemela/ros2_ws/src/ballbot_mapping/include/**",
+        "/home/youssef-shemela/ros2_ws/src/ballbot_planning/include/**",
+        "/home/youssef-shemela/ros2_ws/src/ballbot_utils/include/**",
+        "/home/youssef-shemela/ros2_ws/src/mc_tut1/include/**",
         "/usr/include/**"
       ],
-      "name": "linux-gcc-x64",
+      "name": "ros2",
       "intelliSenseMode": "linux-gcc-x64",
       "compilerPath": "/usr/bin/gcc",
       "cStandard": "${default}",

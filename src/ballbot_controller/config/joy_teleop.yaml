@@ -20,11 +20,11 @@ joy_teleop_node:
  
       axis_mappings:
         linear-x:
-          axis: 1        # Left stick vertical
-          scale: 1.0
-          offset: 0.0
+          axis: 2        # Left stick vertical
+          scale: -0.5
+          offset: 0.5
         angular-z:
-          axis: 3        # Right stick horizontal
+          axis: 3        # Right stick horizontal #which axis is L2 on DualShock4? maybe 4? 
           scale: 1.0
           offset: 0.0
  
