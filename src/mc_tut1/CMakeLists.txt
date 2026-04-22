@@ -17,13 +17,9 @@ find_package(turtlesim REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
-<<<<<<< Updated upstream
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(std_msgs REQUIRED)
-=======
-find_package(std_msgs REQUIRED)
-find_package(rclcpp_lifecycle REQUIRED)
->>>>>>> Stashed changes
+
 
 include_directories(
   include
