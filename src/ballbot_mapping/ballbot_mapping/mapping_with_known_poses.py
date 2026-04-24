@@ -6,6 +6,11 @@ from sensor_msgs.msg import LaserScan
 from tf2_ros import Buffer, TransformListener, LookupException
 import math
 from tf_transformations import euler_from_quaternion
+
+
+PRIOR_PROB = 0.5
+OCC_PROB = 0.9
+FREE_PROB = 0.35
 class Pose:
     def __init__(self, x, y, theta = 0):
         self.x = x
@@ -68,11 +73,19 @@ def inverseSensorModel(p_robot: Pose, p_beam: Pose):
     line = bresenham(p_robot, p_beam)
 
     for p in line[:-1]:
-        occ_values.append((p, 0))
+        occ_values.append((FREE_PROB))
 
-    occ_values.append((line[-1], 100))
+    occ_values.append((line[-1], OCC_PROB))
     return occ_values
 
+def prob2logodds(p):
+    return math.log(p / (1 - p))
+
+def logodds2prob(logodds):
+    try:
+        return 1 / (1 + math.exp(-logodds))
+    except OverflowError:
+        return 1 if logodds>0 else 0.0
 
 
 
@@ -98,6 +111,8 @@ class Mapping(node.Node):
         self.map_.header.frame_id = "odom"
 
         self.map_.data = [-1] * (self.map_.info.width * self.map_.info.height)
+
+        self.probability_map = [prob2logodds(PRIOR_PROB)] * (self.map_.info.width * self.map_.info.height)
 
         self.pub_ = self.create_publisher(OccupancyGrid, "map", 10)
         self.sub_ = self.create_subscription(LaserScan, "scan", self.scan_callback, 10)
@@ -138,9 +153,7 @@ class Mapping(node.Node):
             poses = inverseSensorModel(robot_p, beam_p)
             for p, value in poses:
                 beam_cell = poseToCell(p, self.map_.info)
-                self.map_.data[beam_cell] = value
-
-
+                self.probability_map[beam_cell] += prob2logodds(value) - prob2logodds(PRIOR_PROB)
 
         # robot_cell = poseToCell(robot_p, self.map_.info) prints the cell the robot is in
         # self.map_.data[robot_cell] = 100
@@ -150,6 +163,7 @@ class Mapping(node.Node):
 
     def timer_call_back(self):
         self.map_.header.stamp = self.get_clock().now().to_msg()
+        self.map_.data = [int(logodds2prob(p)) for p in self.probability_map]
         self.pub_.publish(self.map_)
 
 def main():

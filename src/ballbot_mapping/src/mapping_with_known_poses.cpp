@@ -210,6 +210,9 @@ void MappingWithKnownPoses::scanCallback(const sensor_msgs::msg::LaserScan &scan
             probability_map_.at(cell) += prob2logodds(pose.second) - prob2logodds(PRIOR_PROB);
         }
       }
+    // L(cell) = L(cell) + L(sensor_model) - L(prior)
+    // This is the recursive Bayesian update in log-odds form. Each new scan adds more evidence.
+    // After many scans, cells near walls accumulate high positive log-odds (occupied) and open space accumulates negative log-odds (free).   
     }
 }
 
