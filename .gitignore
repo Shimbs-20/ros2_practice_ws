@@ -1,5 +1,33 @@
-/build/
-/install/
-/log/
+# ROS 2 Workspace Build Directories
+build/
+install/
+log/
 
-.cache/
+# Python compiled files and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# C/C++ build artifacts
+*.o
+*.so
+*.a
+*.os
+*.dylib
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and Editor folders
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
