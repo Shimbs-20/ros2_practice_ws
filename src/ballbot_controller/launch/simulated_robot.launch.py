@@ -8,8 +8,6 @@ from launch.substitutions import LaunchConfiguration
 
 
 
-
-
 def generate_launch_description():
 
     use_slam = LaunchConfiguration("use_slam")
@@ -115,11 +113,12 @@ def generate_launch_description():
 
     return LaunchDescription([
         gazebo,
+        use_slam_arg,
         controller,
         joystick,
         safety_stop,
         localization,
-        slam,
-        rviz_localization,
-        rviz_slam
+        slam
+        # rviz_localization,
+        # rviz_slam
     ])

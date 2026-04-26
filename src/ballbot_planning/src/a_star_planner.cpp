@@ -44,10 +44,10 @@ AStarPlanning::AStarPlanning()
     // Same output topics as the Dijkstra node — downstream consumers do not
     // need to know which algorithm produced the path.
     path_pub_ = create_publisher<nav_msgs::msg::Path>(
-        "/dijkstra/path", map_qos);
+        "/a_star/path", map_qos);
 
     map_pub_ = create_publisher<nav_msgs::msg::OccupancyGrid>(
-        "/dijkstra/map", map_qos);
+        "/a_star/map", map_qos);
 
     tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
     tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
