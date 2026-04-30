@@ -1,0 +1,28 @@
+<class_libraries>
+    <library path="pd_motion_planner">
+    <class name="ballbot_motion/PDMotionPlanner"
+           type="ballbot_motion::PDMotionPlanner"
+           base_class_type="nav2_core::Controller">
+      <description>
+        PD Motion Planner controller for Nav2.
+        Uses Proportional-Derivative control to follow a global path.
+        Supports holonomic (omnidirectional) robots via lateral vy output.
+        Set max_lateral_velocity > 0 to enable sideways correction for ballbot.
+      </description>
+    </class>
+  </library>
+ 
+  <library path="pure_pursuit">
+    <class name="ballbot_motion/PurePursuit"
+           type="ballbot_motion::PurePursuit"
+           base_class_type="nav2_core::Controller">
+      <description>
+        Pure Pursuit controller for Nav2.
+        Uses the carrot-on-a-stick algorithm to follow a global path.
+        Supports holonomic robots via lateral vy output for cross-track correction.
+        Set max_lateral_velocity > 0 to enable sideways correction for ballbot.
+      </description>
+    </class>
+  </library>
+ 
+</class_libraries>

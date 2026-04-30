@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="ballbot_gp" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ══════════════════════════════════════════════════════════════
+       GAZEBO HARMONIC PROPERTIES
+       All plugins are for Gazebo Harmonic (gz-sim 8.x) / ROS 2 Jazzy.
+       Old Gazebo Classic plugin names (libgazebo_ros_*.so) will NOT
+       work with gz-sim 8.x.
+  ══════════════════════════════════════════════════════════════ -->
+
+  <!-- ── Material & Friction — Base Link ──────────────────────────
+       Base link is frictionless: the ball rolls freely under it.
+  ──────────────────────────────────────────────────────────────-->
+  <gazebo reference="base_link">
+    <material>Gazebo/White</material>
+    <mu1>0.0</mu1>
+    <mu2>0.0</mu2>
+  </gazebo>
+
+  <!-- ── Material & Friction — Ball ───────────────────────────────
+       High friction ensures the ball grips the ground and doesn't slip.
+       High kp (contact stiffness) prevents the ball sinking into the ground.
+  ──────────────────────────────────────────────────────────────-->
+  <gazebo reference="Sphere">
+    <material>Gazebo/Blue</material>
+    <mu1>1.5</mu1>
+    <mu2>1.5</mu2>
+    <kp>1000000.0</kp>
+    <kd>10.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxContacts>20</maxContacts>
+  </gazebo>
+
+  <!-- ── Material & Friction — Wheels ─────────────────────────────
+       Anisotropic friction: high along drive axis (mu1), lower
+       laterally (mu2) — correct for omnidirectional omniwheel contact.
+  ──────────────────────────────────────────────────────────────-->
+  <gazebo reference="wheel1">
+    <material>Gazebo/DarkGrey</material>
+    <mu1>1.5</mu1>
+    <mu2>0.5</mu2>
+    <kp>500000.0</kp>
+    <kd>10.0</kd>
+    <minDepth>0.001</minDepth>
+  </gazebo>
+
+  <gazebo reference="wheel2">
+    <material>Gazebo/DarkGrey</material>
+    <mu1>1.5</mu1>
+    <mu2>0.5</mu2>
+    <kp>500000.0</kp>
+    <kd>10.0</kd>
+    <minDepth>0.001</minDepth>
+  </gazebo>
+
+  <gazebo reference="wheel3">
+    <material>Gazebo/DarkGrey</material>
+    <mu1>1.5</mu1>
+    <mu2>0.5</mu2>
+    <kp>500000.0</kp>
+    <kd>10.0</kd>
+    <minDepth>0.001</minDepth>
+  </gazebo>
+
+  <!-- ── IMU Sensor (Gazebo Harmonic format) ───────────────────────
+       Old: libgazebo_ros_imu_sensor.so  (Gazebo Classic — DO NOT USE)
+       New: declare sensor on link; load gz-sim-imu-system at world level.
+       The gz-sim-imu-system plugin is loaded below in the world <gazebo> block.
+  ──────────────────────────────────────────────────────────────-->
+  <gazebo reference="base_link">
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>200</update_rate>
+      <topic>imu</topic>
+      <gz_frame_id>base_link</gz_frame_id>
+    </sensor>
+  </gazebo>
+
+  <!-- ── Lidar Sensor (Gazebo Harmonic format) ─────────────────────
+       LD06 specs: 360°, 12 m max range, 10 Hz, 4500 pts/s.
+       Old sensor type was "gpu_ray" (Gazebo Classic).
+       New type is "gpu_lidar" (Gazebo Harmonic).
+       The gz-sim-sensors-system plugin (below) must be loaded for this to work.
+  ──────────────────────────────────────────────────────────────-->
+  <gazebo reference="laser_link">
+    <sensor name="lidar" type="gpu_lidar">
+      <always_on>true</always_on>
+      <update_rate>10</update_rate>
+      <visualize>false</visualize>
+      <topic>scan</topic>
+      <gz_frame_id>laser_link</gz_frame_id>
+      <lidar>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1.0</resolution>
+            <min_angle>0.0</min_angle>
+            <max_angle>6.28319</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.02</min>
+          <max>12.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.005</stddev>
+        </noise>
+      </lidar>
+    </sensor>
+  </gazebo>
+
+  <!-- ── World-Level Plugins ───────────────────────────────────────
+       These are NOT attached to a specific link — they run globally.
+
+       gz_ros2_control-system:
+         OLD: libgazebo_ros2_control.so  (Classic)
+         NEW: gz_ros2_control-system     (Harmonic)
+         Loads the controllers.yaml and connects ros2_control to Gazebo joints.
+
+       gz-sim-imu-system:
+         Required for any IMU sensor in the world to publish data.
+
+       gz-sim-sensors-system:
+         Required for gpu_lidar (and cameras) to render and publish.
+  ──────────────────────────────────────────────────────────────-->
+  <gazebo>
+    <plugin filename="gz_ros2_control-system"
+            name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find gp_description)/config/controllers.yaml</parameters>
+    </plugin>
+
+    <plugin filename="gz-sim-imu-system"
+            name="gz::sim::systems::Imu"/>
+
+    <plugin filename="gz-sim-sensors-system"
+            name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+  </gazebo>
+
+</robot>

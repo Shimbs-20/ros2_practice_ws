@@ -1,137 +1,163 @@
-# import os
-# from os import pathsep
-# from pathlib import Path
-# from ament_index_python.packages import get_package_share_directory
+#!/usr/bin/env python3
+# gazebo.launch.py
+# Launches Gazebo Harmonic (gz-sim 8.x) with the BallBot URDF.
+# Compatible with ROS 2 Jazzy.
 
-# from launch import LaunchDescription
-# from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, SetEnvironmentVariable
-# from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution, PythonExpression
-# from launch.launch_description_sources import PythonLaunchDescriptionSource
+import os
+from pathlib import Path
+from ament_index_python.packages import get_package_share_directory
 
-# from launch_ros.actions import Node
-# from launch_ros.parameter_descriptions import ParameterValue
+from launch import LaunchDescription
+from launch.actions import (
+    DeclareLaunchArgument,
+    IncludeLaunchDescription,
+    SetEnvironmentVariable,
+    TimerAction,
+)
+from launch.substitutions import (
+    Command,
+    LaunchConfiguration,
+    PathJoinSubstitution,
+    PythonExpression,
+)
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 
 
-# def generate_launch_description():
-#     ballbot_description = get_package_share_directory("ballbot_description")
+def generate_launch_description():
 
-#     model_arg = DeclareLaunchArgument(
-#         name="model",
-#         default_value=os.path.join(ballbot_description, "urdf", "ballbot.urdf.xacro"),
-#         description="Absolute path to robot urdf file"
-#     )
+    pkg = get_package_share_directory("gp_description")
 
-#     world_name_arg = DeclareLaunchArgument(name="world_name", default_value="empty")
+    # ── Arguments ────────────────────────────────────────────────
+    model_arg = DeclareLaunchArgument(
+        name="model",
+        default_value=os.path.join(pkg, "urdf", "ballbot1.urdf.xacro"),
+        description="Absolute path to robot URDF xacro file",
+    )
 
-#     world_path = PathJoinSubstitution([
-#             ballbot_description,
-#             "worlds",
-#             PythonExpression(expression=["'", LaunchConfiguration("world_name"), "'", " + '.world'"])
-#         ]
-#     )
+    world_name_arg = DeclareLaunchArgument(
+        name="world_name",
+        default_value="empty",
+        description="World name (without .world extension)",
+    )
 
-#     model_path = str(Path(ballbot_description).parent.resolve())
-#     model_path += pathsep + os.path.join(get_package_share_directory("ballbot_description"), 'models')
+    use_sim_time_arg = DeclareLaunchArgument(
+        name="use_sim_time",
+        default_value="true",
+    )
 
-#     gazebo_resource_path = SetEnvironmentVariable(
-#         "GZ_SIM_RESOURCE_PATH",
-#         model_path
-#     )
+    # ── World path ───────────────────────────────────────────────
+    world_path = PathJoinSubstitution([
+        pkg, "worlds",
+        PythonExpression([
+            "'", LaunchConfiguration("world_name"), "' + '.world'"
+        ]),
+    ])
 
-#     ros_distro = os.environ.get("ROS_DISTRO", "jazzy")
-#     is_ignition = "True" if ros_distro == "humble" else "False"
+    # ── Model resource path (for custom meshes / models) ─────────
+    model_path = os.pathsep.join([
+        str(Path(pkg).parent.resolve()),
+        os.path.join(pkg, "models"),
+    ])
 
-#     robot_description = ParameterValue(Command([
-#             "xacro ",
-#             LaunchConfiguration("model"),
-#             " is_ignition:=",
-#             is_ignition
-#         ]),
-#         value_type=str
-#     )
+    gazebo_resource_path = SetEnvironmentVariable(
+        "GZ_SIM_RESOURCE_PATH",
+        model_path,
+    )
 
-#     robot_state_publisher_node = Node(
-#         package="robot_state_publisher",
-#         executable="robot_state_publisher",
-#         parameters=[{"robot_description": robot_description,
-#                      "use_sim_time": True}]
-#     )
+    # ── Robot description (xacro → URDF) ─────────────────────────
+    robot_description = ParameterValue(
+        Command(["xacro ", LaunchConfiguration("model")]),
+        value_type=str,
+    )
 
-#     # gazebo = IncludeLaunchDescription(
-#     #             PythonLaunchDescriptionSource([os.path.join(
-#     #                 get_package_share_directory("ros_gz_sim"), "launch"), "/gz_sim.launch.py"]),
-#     #             launch_arguments={
-#     #                 "gz_args": [world_path, " -v 4 -r"]
-#     #             }.items()
-#     #          )
+    # ── robot_state_publisher ─────────────────────────────────────
+    # Publishes static TF transforms from URDF joint tree
+    # (base_link → laser_link, base_link → wheel joints etc.)
+    robot_state_publisher = Node(
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        name="robot_state_publisher",
+        output="screen",
+        parameters=[{
+            "robot_description": robot_description,
+            "use_sim_time": LaunchConfiguration("use_sim_time"),
+        }],
+    )
 
-#     gazebo = IncludeLaunchDescription(
-#                 PythonLaunchDescriptionSource([os.path.join(
-#                     get_package_share_directory("ros_gz_sim"), "launch"), "/gz_sim.launch.py"]),
-#                 launch_arguments={
-#                     "gz_args": PythonExpression(["'", world_path, " -v 4 -r'"])
-#                 }.items()
-#              )
+    # ── Gazebo Harmonic ───────────────────────────────────────────
+    # gz_args: world file path + flags
+    #   -v 4  = verbose level 4 (errors + warnings + info)
+    #   -r    = start simulation running immediately
+    gazebo = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory("ros_gz_sim"),
+                "launch", "gz_sim.launch.py",
+            )
+        ),
+        launch_arguments={
+            "gz_args": PythonExpression(["'", world_path, "' + ' -v 4 -r'"]),
+        }.items(),
+    )
 
-#     gz_spawn_entity = Node(
-#         package="ros_gz_sim",
-#         executable="create",
-#         output="screen",
-#         arguments=["-topic", "robot_description",
-#                    "-name", "ballbot"],
-#     )
+    # ── Spawn robot into Gazebo ───────────────────────────────────
+    # Reads robot_description topic published by robot_state_publisher.
+    # Delay to ensure robot_description is published before spawning.
+    gz_spawn = TimerAction(
+        period=2.0,
+        actions=[
+            Node(
+                package="ros_gz_sim",
+                executable="create",
+                name="spawn_ballbot",
+                output="screen",
+                arguments=[
+                    "-topic", "robot_description",
+                    "-name",  "BallBot",
+                    "-z",     "0.13",   # spawn slightly above ground to avoid collision at t=0
+                ],
+            ),
+        ],
+    )
 
-#     gz_ros2_bridge = Node(
-#         package="ros_gz_bridge",
-#         executable="parameter_bridge",
-#         arguments=[
-#             "/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock",
-#             "/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan",
-#             "imu@sensor_msgs/msg/Imu[gz.msgs.IMU",
-#         ]
-#     )
+    # ── ROS ↔ Gazebo topic bridge ─────────────────────────────────
+    # Bridges Gazebo internal topics to ROS 2 topics.
+    #
+    # Format: /topic@ros_type[gz_type   (Gazebo → ROS)
+    #         /topic@ros_type]gz_type   (ROS → Gazebo)
+    #         /topic@ros_type@gz_type   (bidirectional)
+    #
+    gz_bridge = Node(
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        name="ros_gz_bridge",
+        output="screen",
+        arguments=[
+            # Simulation clock → ROS (mandatory for use_sim_time)
+            "/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock",
+            # Lidar scan → ROS (for SLAM)
+            "/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan",
+            # IMU → ROS (for EKF / localization)
+            "/imu@sensor_msgs/msg/Imu[gz.msgs.IMU",
+            # cmd_vel ROS → Gazebo (needed if using PlanarMove plugin)
+            # Uncomment if you add the PlanarMove plugin:
+            # "/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist",
+            # Odometry Gazebo → ROS (if using PlanarMove plugin)
+            # "/odom@nav_msgs/msg/Odometry[gz.msgs.Odometry",
+            # Joint states Gazebo → ROS (for robot_state_publisher)
+            "/world/empty_world/model/BallBot/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model",
+        ],
+    )
 
-#     # # Build the path to your new YAML file
-#     # bridge_config = os.path.join(
-#     #     get_package_share_directory("ballbot_description"),
-#     #     'config',
-#     #     'bridge.yaml'
-#     # )
-
-#     # # Tell the bridge to use the YAML file instead of arguments
-#     # gz_ros2_bridge = Node(
-#     #     package="ros_gz_bridge",
-#     #     executable="parameter_bridge",
-#     #     parameters=[{
-#     #         'config_file': bridge_config,
-#     #     }],
-#     #     output='screen'
-#     # )
-
-# #  Inside your ballbot_description package,
-# # create a new folder named config (if you don't have one).
-# # Inside that, create a file named bridge.yaml and paste this inside.
-# # (Notice I included the /clock topic, which is mandatory for Gazebo simulation time!):
-# # YAML
-
-# # - ros_topic_name: "/clock"
-# #   gz_topic_name: "/clock"
-# #   ros_type_name: "rosgraph_msgs/msg/Clock"
-# #   gz_type_name: "gz.msgs.Clock"
-# #   direction: GZ_TO_ROS
-
-# # - ros_topic_name: "/scan"
-# #   gz_topic_name: "/scan"
-# #   ros_type_name: "sensor_msgs/msg/LaserScan"
-# #   gz_type_name: "gz.msgs.LaserScan"
-# # direction: GZ_TO_ROS
-
-#     return LaunchDescription([
-#         model_arg,
-#         world_name_arg,
-#         gazebo_resource_path,
-#         robot_state_publisher_node,
-#         gazebo,
-#         gz_spawn_entity,
-#         gz_ros2_bridge,
-#     ])
+    return LaunchDescription([
+        model_arg,
+        world_name_arg,
+        use_sim_time_arg,
+        gazebo_resource_path,
+        robot_state_publisher,
+        gazebo,
+        gz_spawn,
+        gz_bridge,
+    ])

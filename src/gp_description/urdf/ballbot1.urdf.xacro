@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="ballbot_gp" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ── Gazebo Harmonic properties (materials, sensors, plugins) -->
+  <xacro:include filename="$(find gp_description)/urdf/ballbot1_gazebo.xacro"/>
+
+  <!-- ── ros2_control hardware interface -->
+  <xacro:include filename="$(find gp_description)/urdf/ballbot1_ros2_control.xacro"/>
+
+>
+  <xacro:property name="ball_radius"      value="0.125"/>
+  <xacro:property name="ball_center_sw_y" value="-0.10347"/>
+
+  <xacro:property name="footprint_z"      value="0.02153"/>
+
+  <!-- Lidar mounting position relative to base_link origin -->
+  <xacro:property name="lidar_x" value="0.0"/>
+  <xacro:property name="lidar_y" value="${ball_center_sw_y}"/>  <!-- -0.10347: centres lidar over ball/body -->
+  <xacro:property name="lidar_z" value="0.73"/>                 <!-- tune to your top-plate mount height -->
+
+  <material name="white"> <color rgba="1.0 1.0 1.0 1"/>       </material>
+  <material name="grey">  <color rgba="0.792 0.820 0.933 1"/> </material>
+  <material name="blue">  <color rgba="0.0 0.2 0.8 1"/>       </material>
+  <material name="black"> <color rgba="0.1 0.1 0.1 1"/>       </material>
+
+  <link name="base_footprint"/>
+
+
+  <joint name="base_footprint_joint" type="fixed">
+    <origin xyz="0.0 0.0 0.0" rpy="0 0.0 1.5708"/>
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+  </joint>
+
+  
+
+
+  <link name="base_link">
+    <inertial>
+      <!-- Exact SolidWorks values in CS1 frame -->
+      <origin xyz="-0.0244718192905085 -0.16334056096161 0.339920868191446"
+              rpy="0 0 0"/>
+      <mass value="9.07275285865356"/>
+      <inertia
+        ixx="0.0571612932870479"
+        ixy="-0.000456309676936411"
+        ixz="0.00199037168846741"
+        iyy="0.0565565469848635"
+        iyz="0.006268892745692"
+        izz="0.0280267227719207"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://gp_description/meshes/base_link.STL"/>
+      </geometry>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <!-- Box approximation centred at CoM — faster physics -->
+      <origin xyz="-0.024 -0.163 0.340" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.35 0.35 0.75"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+<link name="Sphere">
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="5.0"/>
+    <inertia ixx="0.03125" ixy="0.0" ixz="0.0"
+                           iyy="0.03125" iyz="0.0"
+                                         izz="0.03125"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://gp_description/meshes/Sphere.STL"/>
+    </geometry>
+    <material name="blue"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <sphere radius="0.125"/>
+    </geometry>
+  </collision>
+</link>
+
+
+  <joint name="Sphere_joint" type="fixed">
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+    <parent link="base_link"/>
+    <child link="Sphere"/>
+  </joint>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       WHEEL 1
+  ══════════════════════════════════════════════════════════════ -->
+  <link name="wheel1">
+    <inertial>
+      <origin xyz="-0.00953560838271306 5.16370524039633E-05 6.79506333374214E-05"
+              rpy="0 0 0"/>
+      <mass value="0.0951143292904165"/>
+      <inertia
+        ixx="4.6564668190044E-05"
+        ixy="-1.13818252980688E-11"
+        ixz="-1.07929018946086E-12"
+        iyy="2.52584891025195E-05"
+        iyz="-1.47477859092718E-10"
+        izz="2.52591526237752E-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://gp_description/meshes/wheel1.STL"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.04"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="wheel1_joint" type="continuous">
+    <origin xyz="-0.13414 -0.062275 0.10542" rpy="3.1416 0.72885 2.467"/>
+    <parent link="base_link"/>
+    <child link="wheel1"/>
+    <axis xyz="-1 0 0"/>
+    <limit effort="8.9" velocity="41.9"/>
+    <dynamics damping="0.5" friction="0.5"/>
+  </joint>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       WHEEL 2
+  ══════════════════════════════════════════════════════════════ -->
+  <link name="wheel2">
+    <inertial>
+      <origin xyz="-0.00953560990942437 3.71902770001376E-05 -7.68172329360661E-05"
+              rpy="0 0 0"/>
+      <mass value="0.095114303083539"/>
+      <inertia
+        ixx="4.65646613426974E-05"
+        ixy="3.84563052393366E-12"
+        ixz="1.11453090451415E-11"
+        iyy="2.52591401581312E-05"
+        iyz="-1.81644499125135E-10"
+        izz="2.52584940578476E-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://gp_description/meshes/wheel2.STL"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.04"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="wheel2_joint" type="continuous">
+    <origin xyz="-0.00036169 -0.26357 0.071949" rpy="3.1416 0.98464 -1.4141"/>
+    <parent link="base_link"/>
+    <child link="wheel2"/>
+    <axis xyz="-1 0 0"/>
+    <limit effort="8.9" velocity="41.9"/>
+    <dynamics damping="0.5" friction="0.5"/>
+  </joint>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       WHEEL 3
+  ══════════════════════════════════════════════════════════════ -->
+  <link name="wheel3">
+    <inertial>
+      <origin xyz="-0.0095356 -5.2218E-05 -6.7507E-05" rpy="0 0 0"/>
+      <mass value="0.095114"/>
+      <inertia
+        ixx="4.6565E-05" ixy="1.147E-11"  ixz="1.4905E-12"
+                         iyy="2.5258E-05"  iyz="-1.4505E-10"
+                                           izz="2.5259E-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://gp_description/meshes/wheel3.STL"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.04"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="wheel3_joint" type="continuous">
+    <origin xyz="0.11857 -0.045415 0.11596" rpy="-2.708 0.6093 0.68015"/>
+    <parent link="base_link"/>
+    <child link="wheel3"/>
+    <axis xyz="-1 0 0"/>
+    <limit effort="8.9" velocity="41.9"/>
+    <dynamics damping="0.5" friction="0.5"/>
+  </joint>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       LIDAR LINK (LD06)
+       Dedicated link so SLAM and Nav2 know sensor position.
+       Adjust lidar_x/y/z properties at the top of this file.
+  ══════════════════════════════════════════════════════════════ -->
+  <link name="laser_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.073"/>
+      <inertia ixx="1.0E-05" ixy="0" ixz="0"
+                             iyy="1.0E-05" iyz="0"
+                                           izz="1.0E-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <!-- Cylinder representing the LD06 body -->
+        <cylinder radius="0.018" length="0.04"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.018" length="0.04"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint name="laser_joint" type="fixed">
+    <origin xyz="${lidar_x} ${lidar_y} ${lidar_z}" rpy="0 0 3.1416"/>
+    <parent link="base_link"/>
+    <child link="laser_link"/>
+  </joint>
+
+</robot>

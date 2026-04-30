@@ -1,0 +1,15 @@
+smoother_server:
+  ros__parameters:
+    expected_smoother_frequency: 1.0
+    use_sim_time: true
+    smoother_plugins: ["simple_smoother"]
+
+    simple_smoother:
+      plugin: "nav2_smoother::SimpleSmoother"
+      tolerance: 1.0e-10
+      do_refinement: True
+      refinement_num: 2
+      max_its: 1000
+      w_data: 0.2
+      w_smooth: 0.3
+      enforce_path_inversion: True
